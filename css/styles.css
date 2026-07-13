@@ -73,10 +73,11 @@ ul { list-style: none; }
 /* Encabezado de sección reutilizable */
 .seccion { padding: 72px 0; }
 .seccion-titulo {
-  font-size: clamp(1.7rem, 5vw, 2.6rem);
+  font-size: clamp(1.6rem, 5vw, 2.6rem);
   font-weight: 800;
   letter-spacing: -.02em;
   line-height: 1.1;
+  overflow-wrap: break-word;   /* evita que un título largo se corte */
 }
 .seccion-kicker {
   display: inline-block;
@@ -352,11 +353,12 @@ ul { list-style: none; }
 }
 .hero__badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rojo); box-shadow: 0 0 12px var(--rojo); }
 .hero__titulo {
-  font-size: clamp(2.6rem, 11vw, 5.4rem);
+  font-size: clamp(2.4rem, 11vw, 5.4rem);
   font-weight: 800;
   line-height: .98;
   letter-spacing: -.03em;
   text-transform: uppercase;
+  overflow-wrap: break-word;
 }
 .hero__titulo span { display: block; }
 .hero__titulo .rojo { color: var(--rojo); }
@@ -540,7 +542,9 @@ ul { list-style: none; }
 .nosotros { background: var(--gris-claro); }
 .nosotros__grid { display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center; }
 .nosotros__texto p { color: var(--texto-suave); margin-top: 18px; font-size: 1.02rem; }
-.ventajas { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 30px; }
+/* Mobile: una sola columna para que las tarjetas no se corten en pantallas chicas.
+   A partir de tablet pasa a 2 y en desktop a 3 columnas (ver media queries). */
+.ventajas { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 30px; }
 .ventaja {
   background: #fff;
   border: 1px solid var(--gris-borde);
@@ -561,11 +565,17 @@ ul { list-style: none; }
 .ventaja__texto small { color: var(--texto-suave); font-size: .8rem; }
 .nosotros__media { position: relative; border-radius: var(--radio); overflow: hidden; box-shadow: var(--sombra-fuerte); }
 .nosotros__media img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+/* Estadísticas: 3 columnas que SIEMPRE se achican para entrar en la pantalla
+   (minmax(0,1fr) permite que las etiquetas largas hagan wrap sin desbordar) */
 .nosotros__stats {
-  display: flex; gap: 26px; flex-wrap: wrap; margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 18px;
+  margin-top: 30px;
 }
-.stat strong { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; }
-.stat span { display: block; font-size: .82rem; color: var(--texto-suave); }
+.stat { min-width: 0; }
+.stat strong { font-size: clamp(1.4rem, 6vw, 2rem); font-weight: 800; letter-spacing: -.02em; }
+.stat span { display: block; font-size: .8rem; color: var(--texto-suave); overflow-wrap: break-word; }
 .stat strong .rojo { color: var(--rojo); }
 
 /* -------------------------------------------------------------
@@ -697,14 +707,73 @@ ul { list-style: none; }
 }
 .modal-baki__cerrar:hover { background: var(--rojo); transform: rotate(90deg); }
 
-/* Galería */
+/* Galería deslizable (carrusel con swipe lateral) */
 .ficha__galeria { background: #000; }
-.ficha__foto-grande {
+.ficha__visor { position: relative; }
+
+/* Contenedor que se desliza horizontalmente con el dedo (scroll-snap) */
+.ficha__carrusel {
+  display: flex;
   aspect-ratio: 16 / 10;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;   /* inercia en iOS */
+  scrollbar-width: none;               /* Firefox */
   background: #111;
-  overflow: hidden;
 }
-.ficha__foto-grande img { width: 100%; height: 100%; object-fit: cover; }
+.ficha__carrusel::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.ficha__slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* Flechas (útiles en desktop; en mobile además funciona el swipe) */
+.ficha__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(17, 17, 17, .5);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background var(--transicion), transform var(--transicion);
+  z-index: 2;
+}
+.ficha__nav:hover { background: var(--rojo); }
+.ficha__nav--prev { left: 12px; }
+.ficha__nav--next { right: 12px; }
+
+/* Puntos indicadores */
+.ficha__dots {
+  position: absolute;
+  left: 0; right: 0; bottom: 12px;
+  display: flex; justify-content: center; gap: 8px;
+  z-index: 2;
+}
+.ficha__dot {
+  width: 8px; height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .5);
+  cursor: pointer;
+  transition: background var(--transicion), width var(--transicion), border-radius var(--transicion);
+}
+.ficha__dot.activo { background: var(--rojo); width: 22px; border-radius: 5px; }
+
 .ficha__miniaturas {
   display: flex; gap: 10px; padding: 12px;
   overflow-x: auto;

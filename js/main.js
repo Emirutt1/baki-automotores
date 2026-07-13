@@ -178,21 +178,37 @@
     const fallback = imgFallback(`${v.marca} ${v.modelo}`);
     const errAttr = `onerror="this.onerror=null;this.src='${fallback}'"`;
 
+    const hayVarias = v.galeria.length > 1;
+
+    // Slides deslizables (una imagen por vista)
+    const slides = v.galeria.map((src, i) => `
+      <img class="ficha__slide" src="${src}" alt="${v.marca} ${v.modelo} foto ${i + 1}"
+           ${i === 0 ? '' : 'loading="lazy"'} ${errAttr}>`).join('');
+
+    // Puntos indicadores (uno por foto)
+    const dots = v.galeria.map((_, i) => `
+      <button class="ficha__dot ${i === 0 ? 'activo' : ''}" data-ir="${i}" aria-label="Ir a la foto ${i + 1}"></button>`).join('');
+
+    // Miniaturas clickeables
     const minis = v.galeria.map((src, i) => `
-      <img src="${src}" alt="${v.marca} ${v.modelo} foto ${i + 1}"
-           class="${i === 0 ? 'activa' : ''}" data-mini="${src}" loading="lazy" ${errAttr}>`).join('');
+      <img src="${src}" alt="Miniatura ${i + 1}" class="${i === 0 ? 'activa' : ''}"
+           data-ir="${i}" loading="lazy" ${errAttr}>`).join('');
 
     modalCaja.innerHTML = `
       <button class="modal-baki__cerrar" data-cerrar aria-label="Cerrar ficha">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <!-- Galería -->
+      <!-- Galería deslizable (swipe lateral) -->
       <div class="ficha__galeria">
-        <div class="ficha__foto-grande">
-          <img id="ficha-foto" src="${v.galeria[0]}" alt="${v.marca} ${v.modelo} ${v.anio}" ${errAttr}>
+        <div class="ficha__visor">
+          <div class="ficha__carrusel" id="ficha-carrusel">${slides}</div>
+          ${hayVarias ? `
+          <button class="ficha__nav ficha__nav--prev" data-nav="-1" aria-label="Foto anterior"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="ficha__nav ficha__nav--next" data-nav="1" aria-label="Foto siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+          <div class="ficha__dots" id="ficha-dots">${dots}</div>` : ''}
         </div>
-        <div class="ficha__miniaturas">${minis}</div>
+        ${hayVarias ? `<div class="ficha__miniaturas">${minis}</div>` : ''}
       </div>
 
       <div class="ficha__cuerpo">
@@ -249,15 +265,8 @@
         </div>
       </div>`;
 
-    /* Miniaturas → cambian la foto grande */
-    const fotoGrande = $('#ficha-foto', modalCaja);
-    $$('.ficha__miniaturas img', modalCaja).forEach(mini => {
-      mini.addEventListener('click', () => {
-        fotoGrande.src = mini.dataset.mini;
-        $$('.ficha__miniaturas img', modalCaja).forEach(m => m.classList.remove('activa'));
-        mini.classList.add('activa');
-      });
-    });
+    /* Carrusel deslizable: swipe nativo + flechas + miniaturas + puntos */
+    activarCarrusel();
 
     /* Botón cerrar */
     $('[data-cerrar]', modalCaja).addEventListener('click', cerrarFicha);
@@ -266,6 +275,50 @@
     modal.classList.add('abierto');
     document.body.classList.add('sin-scroll');
     modalCaja.scrollTop = 0;
+  }
+
+  /* Activa el carrusel de fotos de la ficha.
+     - Swipe lateral: nativo, vía overflow-x + scroll-snap (funciona con el dedo).
+     - Flechas, miniaturas y puntos: navegan entre fotos.
+     - Al deslizar, se actualiza el punto/miniatura activos. */
+  function activarCarrusel() {
+    const carrusel = $('#ficha-carrusel', modalCaja);
+    if (!carrusel) return;
+    const slides = $$('.ficha__slide', carrusel);
+    const dots   = $$('.ficha__dot', modalCaja);
+    const minis  = $$('.ficha__miniaturas img', modalCaja);
+    let actual = 0;
+
+    // Marca la foto activa en puntos y miniaturas
+    const marcar = (i) => {
+      dots.forEach((d, k) => d.classList.toggle('activo', k === i));
+      minis.forEach((m, k) => m.classList.toggle('activa', k === i));
+    };
+
+    // Desplaza el carrusel hasta la foto indicada
+    const irA = (i) => {
+      actual = Math.max(0, Math.min(i, slides.length - 1));
+      carrusel.scrollTo({ left: actual * carrusel.clientWidth, behavior: 'smooth' });
+      marcar(actual);
+    };
+
+    // Flechas (prev/next)
+    $$('.ficha__nav', modalCaja).forEach(btn =>
+      btn.addEventListener('click', () => irA(actual + parseInt(btn.dataset.nav, 10))));
+
+    // Puntos y miniaturas → van directo a esa foto
+    [...dots, ...minis].forEach(el =>
+      el.addEventListener('click', () => irA(parseInt(el.dataset.ir, 10))));
+
+    // Al deslizar con el dedo, detecta la foto visible y actualiza indicadores
+    let t;
+    carrusel.addEventListener('scroll', () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        const i = Math.round(carrusel.scrollLeft / carrusel.clientWidth);
+        if (i !== actual) { actual = i; marcar(i); }
+      }, 80);
+    }, { passive: true });
   }
 
   /* Bloque de dato simple (label + valor) */
