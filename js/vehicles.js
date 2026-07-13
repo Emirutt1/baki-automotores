@@ -36,6 +36,10 @@ const IMG_MOTO = [
 /* Arma una galería de 3 fotos rotando el pool */
 const gal = (pool, i) => [pool[i % pool.length], pool[(i + 3) % pool.length], pool[9 % pool.length]];
 
+/* Fotos locales optimizadas de un vehículo (assets/vehiculos/slug-1.webp ...) */
+const fotos = (slug, n = 5) =>
+  Array.from({ length: n }, (_, i) => `assets/vehiculos/${slug}-${i + 1}.webp`);
+
 /* =============================================================
    Listado de vehículos
    ============================================================= */
@@ -55,7 +59,7 @@ const VEHICULOS = [
     equipamiento: ['Pantalla táctil 8"', 'Apple CarPlay / Android Auto', 'Cámara de retroceso', 'Llave inteligente', 'Sensores de estacionamiento', 'Climatizador automático'],
     seguridad: ['7 airbags', 'ABS + EBD', 'Control de estabilidad', 'Control de tracción', 'Toyota Safety Sense', 'Anclajes ISOFIX'],
     confort: ['Butacas parcialmente eléctricas', 'Tapizado de cuero', 'Volante multifunción', 'Encendido por botón', 'Espejos rebatibles eléctricos'],
-    img: IMG_AUTO[0], galeria: gal(IMG_AUTO, 0),
+    img: 'assets/vehiculos/corolla-card.webp', galeria: fotos('corolla'),
   },
   {
     id: 2, tipo: 'auto', marca: 'Toyota', modelo: 'Hilux', version: 'SRV 2.8 TDI 4x4 AT',
@@ -71,7 +75,7 @@ const VEHICULOS = [
     equipamiento: ['Pantalla multimedia', 'Cámara de retroceso', 'Control crucero', 'Faros LED', 'Llantas 18"', 'Tomas 12V en caja'],
     seguridad: ['7 airbags', 'ABS + EBD', 'Control de descenso', 'Asistente de arranque en pendiente', 'Control de estabilidad', 'Diferencial trasero autoblocante'],
     confort: ['Climatizador automático bizona', 'Butaca del conductor eléctrica', 'Tapizado de cuero', 'Volante con levas', 'Llave inteligente'],
-    img: IMG_AUTO[3], galeria: gal(IMG_AUTO, 3),
+    img: 'assets/vehiculos/hilux-card.webp', galeria: fotos('hilux'),
   },
   {
     id: 3, tipo: 'auto', marca: 'Volkswagen', modelo: 'Amarok', version: 'Highline 3.0 V6 4x4 AT',
@@ -87,7 +91,7 @@ const VEHICULOS = [
     equipamiento: ['App-Connect', 'Cámara de retroceso', 'Sensores 360°', 'Faros bi-xenón', 'Llantas 19"', 'Techo con barras'],
     seguridad: ['Airbags frontales y laterales', 'ABS off-road', 'Control de estabilidad', 'Asistente de descenso', 'Cámara multivista'],
     confort: ['Climatizador bizona', 'Butacas eléctricas con memoria', 'Volante con levas', 'Encendido por botón', 'Cargador y tomas USB'],
-    img: IMG_AUTO[10], galeria: gal(IMG_AUTO, 10),
+    img: 'assets/vehiculos/amarok-card.webp', galeria: fotos('amarok'),
   },
   {
     id: 4, tipo: 'auto', marca: 'Volkswagen', modelo: 'Golf', version: 'GTI 2.0 TSI DSG',
@@ -103,7 +107,7 @@ const VEHICULOS = [
     equipamiento: ['Digital Cockpit', 'Pantalla táctil', 'App-Connect', 'Faros full LED', 'Llantas 18" GTI', 'Escape deportivo'],
     seguridad: ['6 airbags', 'ABS + ESP', 'Control de tracción', 'Asistente de frenado', 'Anclajes ISOFIX'],
     confort: ['Climatizador Climatronic', 'Butacas deportivas', 'Volante multifunción en cuero', 'Sensor de lluvia', 'Encendido por botón'],
-    img: IMG_AUTO[4], galeria: gal(IMG_AUTO, 4),
+    img: 'assets/vehiculos/golf-card.webp', galeria: fotos('golf'),
   },
   {
     id: 5, tipo: 'auto', marca: 'Volkswagen', modelo: 'Polo', version: 'Highline 1.6 MSI AT',
