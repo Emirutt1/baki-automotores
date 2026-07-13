@@ -1,0 +1,15 @@
+# Archivos del sistema
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Editores / IDE / herramientas
+.vscode/
+.idea/
+.claude/
+*.swp
+
+# Dependencias / temporales (por si se agregan luego)
+node_modules/
+*.log
