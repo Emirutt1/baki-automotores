@@ -408,7 +408,7 @@ ul { list-style: none; }
   border-radius: var(--radio);
   box-shadow: var(--sombra);
   padding: 22px;
-  margin-top: -48px;               /* Se superpone al hero en desktop */
+  margin-top: 24px;                /* Separación limpia con el título (antes se superponía y lo tapaba) */
   position: relative;
   z-index: 5;
 }
