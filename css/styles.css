@@ -156,8 +156,7 @@ ul { list-style: none; }
 }
 /* Estado tras hacer scroll: fondo oscuro translúcido */
 .navbar-baki.scrolled {
-  background: rgba(17, 17, 17, .92);
-  backdrop-filter: blur(12px);
+  background: rgba(17, 17, 17, .96);
   box-shadow: 0 6px 24px rgba(0, 0, 0, .25);
   height: 62px;
 }
@@ -296,15 +295,27 @@ ul { list-style: none; }
   background: #000;
   color: #fff;
 }
-/* Capa de fondo (imagen nocturna) */
+/* Capa de fondo (degradado de marca: negro + destello rojo) */
 .hero__fondo {
   position: absolute; inset: 0;
-  background: url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1920&q=80") center/cover no-repeat;
-  transform: scale(1.08);
-  animation: heroZoom 18s ease-in-out infinite alternate;
-  filter: saturate(1.05) brightness(.7);
+  background:
+    radial-gradient(circle at 50% 40%, rgba(227, 6, 19, .22) 0%, transparent 55%),
+    linear-gradient(180deg, #212127 0%, #161618 48%, #0b0b0d 100%);
+  transform: scale(1.06);
+  animation: heroZoom 20s ease-in-out infinite alternate;
 }
-@keyframes heroZoom { from { transform: scale(1.08); } to { transform: scale(1.18); } }
+@keyframes heroZoom { from { transform: scale(1.04); } to { transform: scale(1.12); } }
+
+/* Escudo BAKI (extraído del logo, recoloreado a los colores de la marca) */
+.hero__marca {
+  position: absolute; inset: 0;
+  background: url("../assets/hero-logo.png") center 40% / min(62vw, 440px) auto no-repeat;
+  opacity: .16;
+  filter: drop-shadow(0 0 45px rgba(227, 6, 19, .3));
+  animation: marcaFlota 9s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes marcaFlota { from { transform: translateY(-8px); } to { transform: translateY(8px); } }
 
 /* Video opcional: descomentar el <video> en el HTML y colocar assets/hero.mp4 */
 .hero__video {
@@ -327,10 +338,15 @@ ul { list-style: none; }
   position: absolute;
   height: 2px;
   border-radius: 2px;
-  filter: blur(.5px);
   opacity: 0;
+  will-change: transform, opacity;
   animation: estelaMov linear infinite;
 }
+/* Pausa TODAS las animaciones del hero cuando no está a la vista
+   (evita repintados constantes mientras se navega el catálogo → más fluido) */
+.hero.pausa .hero__fondo,
+.hero.pausa .hero__marca,
+.hero.pausa .estela { animation-play-state: paused; }
 .estela.roja  { background: linear-gradient(90deg, transparent, rgba(227,6,19,.9), transparent); }
 .estela.blanca{ background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent); }
 @keyframes estelaMov {
@@ -349,7 +365,7 @@ ul { list-style: none; }
   border: 1px solid rgba(255,255,255,.25);
   border-radius: 50px;
   margin-bottom: 22px;
-  backdrop-filter: blur(4px);
+  background: rgba(255,255,255,.06);
 }
 .hero__badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rojo); box-shadow: 0 0 12px var(--rojo); }
 .hero__titulo {
@@ -484,7 +500,9 @@ ul { list-style: none; }
   aspect-ratio: 16 / 10;
   overflow: hidden;
   background: var(--gris-claro);
+  cursor: pointer;
 }
+.tarjeta__foto:focus-visible { outline: 3px solid var(--rojo); outline-offset: 3px; }
 .tarjeta__foto img {
   width: 100%; height: 100%;
   object-fit: cover;
@@ -495,12 +513,11 @@ ul { list-style: none; }
   position: absolute; top: 14px; left: 14px;
   font-size: .68rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
   color: #fff;
-  background: rgba(17,17,17,.72);
-  backdrop-filter: blur(4px);
+  background: rgba(17,17,17,.85);
   padding: 6px 12px;
   border-radius: 50px;
 }
-.tarjeta__tipo.moto { background: rgba(227,6,19,.9); }
+.tarjeta__tipo.moto { background: rgba(227,6,19,.92); }
 .tarjeta__anio {
   position: absolute; top: 14px; right: 14px;
   font-size: .72rem; font-weight: 700;
@@ -673,8 +690,7 @@ ul { list-style: none; }
   justify-content: center;
   padding: 0;
   overflow-y: auto;
-  background: rgba(10,10,10,.72);
-  backdrop-filter: blur(6px);
+  background: rgba(10,10,10,.88);
   opacity: 0;
   transition: opacity var(--transicion);
 }
@@ -733,6 +749,7 @@ ul { list-style: none; }
   scroll-snap-stop: always;
   -webkit-user-drag: none;
   user-select: none;
+  cursor: zoom-in;
 }
 
 /* Flechas (útiles en desktop; en mobile además funciona el swipe) */
@@ -744,11 +761,10 @@ ul { list-style: none; }
   display: grid; place-items: center;
   border: none;
   border-radius: 50%;
-  background: rgba(17, 17, 17, .5);
+  background: rgba(17, 17, 17, .62);
   color: #fff;
   font-size: 1rem;
   cursor: pointer;
-  backdrop-filter: blur(4px);
   transition: background var(--transicion), transform var(--transicion);
   z-index: 2;
 }
@@ -853,6 +869,63 @@ ul { list-style: none; }
 body.sin-scroll { overflow: hidden; }
 
 /* -------------------------------------------------------------
+   12b. Visor ampliado (lightbox) — foto grande deslizable
+   ------------------------------------------------------------- */
+.lightbox {
+  position: fixed; inset: 0;
+  z-index: 3000;
+  display: none;
+  background: rgba(6, 6, 8, .97);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.lightbox.abierto { display: block; opacity: 1; }
+
+.lightbox__carrusel {
+  position: absolute; inset: 0;
+  display: flex;
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.lightbox__carrusel::-webkit-scrollbar { display: none; }
+.lightbox__slide {
+  flex: 0 0 100%;
+  width: 100%; height: 100%;
+  display: grid; place-items: center;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  padding: 64px 16px 84px;
+}
+.lightbox__slide img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain;
+  -webkit-user-drag: none; user-select: none;
+  border-radius: 6px;
+}
+.lightbox__cerrar,
+.lightbox__nav {
+  position: fixed; z-index: 5;
+  border: none; background: rgba(255, 255, 255, .12); color: #fff;
+  cursor: pointer; display: grid; place-items: center;
+  border-radius: 50%;
+  transition: background var(--transicion), transform var(--transicion);
+}
+.lightbox__cerrar { top: 18px; right: 18px; width: 48px; height: 48px; font-size: 1.2rem; }
+.lightbox__cerrar:hover { background: var(--rojo); transform: rotate(90deg); }
+.lightbox__nav { top: 50%; transform: translateY(-50%); width: 50px; height: 50px; font-size: 1.15rem; }
+.lightbox__nav:hover { background: var(--rojo); }
+.lightbox__nav--prev { left: 18px; }
+.lightbox__nav--next { right: 18px; }
+.lightbox__contador {
+  position: fixed; left: 0; right: 0; bottom: 26px; z-index: 5;
+  text-align: center; color: rgba(255, 255, 255, .8);
+  font-size: .9rem; letter-spacing: .05em; font-weight: 500;
+}
+
+/* -------------------------------------------------------------
    13. Utilidades de animación
    ------------------------------------------------------------- */
 .fade-left { opacity: 0; transform: translateX(-40px); }
@@ -876,12 +949,20 @@ body.sin-scroll { overflow: hidden; }
 
   .footer__top { grid-template-columns: 1.6fr 1fr 1fr; }
 
-  .modal-baki { padding: 40px 24px; align-items: center; }
-  .modal-baki__caja { min-height: auto; border-radius: var(--radio); }
+  /* align-items:flex-start evita que el modal recorte la parte de arriba
+     cuando el contenido es más alto que la ventana (bug de flex + overflow) */
+  .modal-baki { padding: 34px 24px; align-items: flex-start; }
+  .modal-baki__caja { min-height: auto; border-radius: var(--radio); margin: 0 auto; }
   .modal-baki__cerrar { position: absolute; }
   .ficha__datos { grid-template-columns: repeat(3, 1fr); }
   .ficha__bloques { grid-template-columns: 1fr 1fr; }
   .ficha__pie { margin: 30px -22px -40px; }
+
+  /* Visor de la ficha en PC: la foto entra COMPLETA (sin recorte ni zoom).
+     Se limita a la altura de la ventana para que se vea entera de un vistazo. */
+  .ficha__carrusel { aspect-ratio: auto; height: min(66vh, 560px); }
+  .ficha__slide { object-fit: contain; background: #000; }
+  .ficha__miniaturas img { width: 92px; height: 66px; }
 }
 
 /* -------------------------------------------------------------

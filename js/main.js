@@ -32,9 +32,10 @@
     const fallback = `imgFallback('${(v.marca + ' ' + v.modelo).replace(/'/g, '')}')`;
     return `
       <article class="tarjeta" data-aos="fade-up">
-        <div class="tarjeta__foto">
-          <img src="${v.img}" alt="${v.marca} ${v.modelo} ${v.anio}" loading="lazy"
-               onerror="this.onerror=null;this.src=${fallback}">
+        <div class="tarjeta__foto" data-ver="${v.id}" role="button" tabindex="0"
+             aria-label="Ver ficha de ${v.marca} ${v.modelo} ${v.anio}">
+          <img src="${v.img}" alt="${v.marca} ${v.modelo} ${v.anio}" loading="lazy" decoding="async"
+               width="800" height="500" onerror="this.onerror=null;this.src=${fallback}">
           <span class="tarjeta__tipo ${v.tipo === 'moto' ? 'moto' : ''}">${v.tipo === 'moto' ? 'Moto' : 'Auto'}</span>
           <span class="tarjeta__anio">${v.anio}</span>
         </div>
@@ -183,7 +184,7 @@
     // Slides deslizables (una imagen por vista)
     const slides = v.galeria.map((src, i) => `
       <img class="ficha__slide" src="${src}" alt="${v.marca} ${v.modelo} foto ${i + 1}"
-           ${i === 0 ? '' : 'loading="lazy"'} ${errAttr}>`).join('');
+           decoding="async" ${i === 0 ? '' : 'loading="lazy"'} ${errAttr}>`).join('');
 
     // Puntos indicadores (uno por foto)
     const dots = v.galeria.map((_, i) => `
@@ -192,7 +193,7 @@
     // Miniaturas clickeables
     const minis = v.galeria.map((src, i) => `
       <img src="${src}" alt="Miniatura ${i + 1}" class="${i === 0 ? 'activa' : ''}"
-           data-ir="${i}" loading="lazy" ${errAttr}>`).join('');
+           data-ir="${i}" loading="lazy" decoding="async" ${errAttr}>`).join('');
 
     modalCaja.innerHTML = `
       <button class="modal-baki__cerrar" data-cerrar aria-label="Cerrar ficha">
@@ -243,10 +244,6 @@
 
         <!-- Bloques descriptivos -->
         <div class="ficha__bloques">
-          ${bloque('fa-screwdriver-wrench', 'Servicios realizados', `<p>${v.servicios}</p>`)}
-          ${bloque('fa-circle-dot', 'Neumáticos', `<p>${v.neumaticos}</p>`)}
-          ${bloque('fa-couch', 'Interior', `<p>${v.interior}</p>`)}
-          ${bloque('fa-car-side', 'Exterior', `<p>${v.exterior}</p>`)}
           ${bloque('fa-list-check', 'Equipamiento', `<div class="chips">${chips(v.equipamiento)}</div>`)}
           ${bloque('fa-shield-halved', 'Seguridad', `<div class="chips">${chips(v.seguridad)}</div>`)}
           ${bloque('fa-star', 'Confort', `<div class="chips">${chips(v.confort)}</div>`)}
@@ -310,6 +307,10 @@
     [...dots, ...minis].forEach(el =>
       el.addEventListener('click', () => irA(parseInt(el.dataset.ir, 10))));
 
+    // Click en una foto → abre el visor ampliado (lightbox) en esa foto
+    slides.forEach((img, i) =>
+      img.addEventListener('click', () => abrirLightbox(slides.map(s => s.getAttribute('src')), actual)));
+
     // Al deslizar con el dedo, detecta la foto visible y actualiza indicadores
     let t;
     carrusel.addEventListener('scroll', () => {
@@ -320,6 +321,98 @@
       }, 80);
     }, { passive: true });
   }
+
+  /* ===========================================================
+     3b. VISOR AMPLIADO (LIGHTBOX)
+     Foto grande a pantalla completa, deslizable (swipe) + flechas.
+     =========================================================== */
+  const LB = { el: null, carrusel: null, contador: null, total: 0, actual: 0, t: null };
+
+  /* Crea el lightbox una sola vez y lo reutiliza */
+  function crearLightbox() {
+    if (LB.el) return;
+    const el = document.createElement('div');
+    el.className = 'lightbox';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('aria-label', 'Foto ampliada');
+    el.innerHTML = `
+      <div class="lightbox__carrusel" id="lightbox-carrusel"></div>
+      <button class="lightbox__nav lightbox__nav--prev" data-lb-nav="-1" aria-label="Foto anterior"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="lightbox__nav lightbox__nav--next" data-lb-nav="1" aria-label="Foto siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+      <div class="lightbox__contador" id="lightbox-contador"></div>
+      <button class="lightbox__cerrar" data-lb-cerrar aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>`;
+    document.body.appendChild(el);
+
+    LB.el       = el;
+    LB.carrusel = $('#lightbox-carrusel', el);
+    LB.contador = $('#lightbox-contador', el);
+
+    // Cerrar: botón, o click fuera de la imagen
+    $('[data-lb-cerrar]', el).addEventListener('click', cerrarLightbox);
+    LB.carrusel.addEventListener('click', (e) => {
+      if (e.target === LB.carrusel || e.target.classList.contains('lightbox__slide')) cerrarLightbox();
+    });
+
+    // Flechas
+    $$('.lightbox__nav', el).forEach(btn =>
+      btn.addEventListener('click', () => lbIrA(LB.actual + parseInt(btn.dataset.lbNav, 10))));
+
+    // Al deslizar, actualiza el contador
+    LB.carrusel.addEventListener('scroll', () => {
+      clearTimeout(LB.t);
+      LB.t = setTimeout(() => {
+        const i = Math.round(LB.carrusel.scrollLeft / LB.carrusel.clientWidth);
+        if (i !== LB.actual) { LB.actual = i; lbMarcar(); }
+      }, 80);
+    }, { passive: true });
+  }
+
+  /* Abre el visor con un array de imágenes en el índice indicado */
+  function abrirLightbox(imgs, indice = 0) {
+    if (!imgs || !imgs.length) return;
+    crearLightbox();
+    LB.total  = imgs.length;
+    LB.actual = Math.max(0, Math.min(indice, imgs.length - 1));
+
+    LB.carrusel.innerHTML = imgs.map((src, i) => `
+      <div class="lightbox__slide"><img src="${src}" alt="Foto ${i + 1}" decoding="async" ${i === 0 ? '' : 'loading="lazy"'}></div>`).join('');
+
+    // Oculta flechas si hay una sola foto
+    const varias = imgs.length > 1;
+    $$('.lightbox__nav', LB.el).forEach(b => b.style.display = varias ? '' : 'none');
+
+    LB.el.classList.add('abierto');
+    document.body.classList.add('sin-scroll');
+    lbMarcar();
+    // Salta a la foto pedida (sin animación) una vez pintado
+    requestAnimationFrame(() => {
+      LB.carrusel.scrollLeft = LB.actual * LB.carrusel.clientWidth;
+    });
+  }
+
+  /* Actualiza el contador "n / total" */
+  function lbMarcar() {
+    if (LB.contador) LB.contador.textContent = `${LB.actual + 1} / ${LB.total}`;
+  }
+
+  /* Desplaza el visor a una foto */
+  function lbIrA(i) {
+    LB.actual = Math.max(0, Math.min(i, LB.total - 1));
+    LB.carrusel.scrollTo({ left: LB.actual * LB.carrusel.clientWidth, behavior: 'smooth' });
+    lbMarcar();
+  }
+
+  /* Cierra el visor ampliado */
+  function cerrarLightbox() {
+    if (!LB.el) return;
+    LB.el.classList.remove('abierto');
+    // Si la ficha sigue abierta, mantené el scroll bloqueado
+    if (!modal.classList.contains('abierto')) document.body.classList.remove('sin-scroll');
+  }
+
+  /* True si el visor ampliado está abierto */
+  const lightboxAbierto = () => LB.el && LB.el.classList.contains('abierto');
 
   /* Bloque de dato simple (label + valor) */
   const dato = (label, valor) => `
@@ -344,8 +437,22 @@
       const btn = e.target.closest('[data-ver]');
       if (btn) abrirFicha(parseInt(btn.dataset.ver));
     });
+    /* Accesibilidad: abrir ficha con Enter/Espacio sobre la foto */
+    grilla.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const el = e.target.closest('.tarjeta__foto[data-ver]');
+      if (el) { e.preventDefault(); abrirFicha(parseInt(el.dataset.ver)); }
+    });
     modal.addEventListener('click', (e) => { if (e.target === modal) cerrarFicha(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarFicha(); });
+    document.addEventListener('keydown', (e) => {
+      if (lightboxAbierto()) {
+        if (e.key === 'Escape') cerrarLightbox();
+        else if (e.key === 'ArrowLeft')  lbIrA(LB.actual - 1);
+        else if (e.key === 'ArrowRight') lbIrA(LB.actual + 1);
+        return;
+      }
+      if (e.key === 'Escape') cerrarFicha();
+    });
   }
 
   /* ===========================================================
@@ -380,7 +487,7 @@
   function generarEstelas() {
     const cont = $('#hero-estelas');
     if (!cont) return;
-    const total = window.innerWidth < 768 ? 6 : 12;
+    const total = window.innerWidth < 768 ? 5 : 8;
     for (let i = 0; i < total; i++) {
       const e = document.createElement('span');
       e.className = 'estela ' + (Math.random() > .5 ? 'roja' : 'blanca');
@@ -390,6 +497,17 @@
       e.style.animationDelay = `${Math.random() * 6}s`;
       cont.appendChild(e);
     }
+  }
+
+  /* Pausa las animaciones del hero cuando queda fuera de pantalla,
+     así no se repinta mientras se navega el resto de la página. */
+  function activarPausaHero() {
+    const hero = $('#inicio');
+    if (!hero || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(([e]) => {
+      hero.classList.toggle('pausa', !e.isIntersecting);
+    }, { threshold: 0 });
+    io.observe(hero);
   }
 
   function animarHero() {
@@ -416,6 +534,7 @@
     activarNavbar();
     generarEstelas();
     animarHero();
+    activarPausaHero();
 
     /* Año dinámico en el footer */
     const y = $('#anio-actual');

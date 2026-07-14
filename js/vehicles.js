@@ -1,40 +1,9 @@
 /* =============================================================
-   BAKI AUTOMOTORES — Base de datos de vehículos (ficticia)
+   BAKI AUTOMOTORES — Base de datos de vehículos
    15 autos + 5 motos · Modelos comercializados en Argentina.
-   Toda la información es ficticia pero coherente con el mercado local.
-   Imágenes ilustrativas (Unsplash), libres de uso — NO son fotos
-   oficiales ni pertenecen a la concesionaria.
+   Fotos reales de cada unidad, optimizadas para web
+   (assets/vehiculos/slug-N.webp).
    ============================================================= */
-
-/* Helper: arma la URL de una imagen ilustrativa de Unsplash */
-const U = (id, w = 800) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
-
-/* Pools de imágenes ilustrativas reutilizables */
-const IMG_AUTO = [
-  U('1503376780353-7e6692767b70'), // 0
-  U('1552519507-da3b142c6e3d'),     // 1
-  U('1494976388531-d1058494cdd8'),  // 2
-  U('1568605117036-5fe5e7bab0b7'),  // 3
-  U('1541899481282-d53bffe3c35d'),  // 4
-  U('1583121274602-3e2820c69888'),  // 5
-  U('1605559424843-9e4c228bf1c2'),  // 6
-  U('1502877338535-766e1452684a'),  // 7
-  U('1550355291-bbee04a92027'),     // 8
-  U('1542282088-fe8426682b8f'),     // 9  (interior)
-  U('1493238792000-8113da705763'),  // 10
-  U('1519641471654-76ce0107ad1b'),  // 11
-];
-const IMG_MOTO = [
-  U('1558981806-ec527fa84c39'),
-  U('1568772585407-9361f9bf3a87'),
-  U('1449426468159-d96dbf08f19f'),
-  U('1591637333184-19aa84b3e01f'),
-  U('1517954259714-6d3aa6d09a34'),
-];
-
-/* Arma una galería de 3 fotos rotando el pool */
-const gal = (pool, i) => [pool[i % pool.length], pool[(i + 3) % pool.length], pool[9 % pool.length]];
 
 /* Fotos locales optimizadas de un vehículo (assets/vehiculos/slug-1.webp ...) */
 const fotos = (slug, n = 5) =>
@@ -49,7 +18,7 @@ const VEHICULOS = [
     id: 1, tipo: 'auto', marca: 'Toyota', modelo: 'Corolla', version: 'XEI 2.0 CVT',
     anio: 2021, precio: 27500000, km: 45000, combustible: 'Nafta',
     motor: '2.0 16V Dual VVT-i', potencia: '170 cv', caja: 'Automática CVT',
-    traccion: 'Delantera', color: 'Gris Plata', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Delantera', color: 'Blanco Perlado', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AF 123 KL', duenos: 1, estado: 'Excelente',
     servicios: 'Todos los services realizados en concesionario oficial. Último a los 40.000 km.',
     neumaticos: 'Bridgestone Turanza — 70% de vida útil',
@@ -59,13 +28,13 @@ const VEHICULOS = [
     equipamiento: ['Pantalla táctil 8"', 'Apple CarPlay / Android Auto', 'Cámara de retroceso', 'Llave inteligente', 'Sensores de estacionamiento', 'Climatizador automático'],
     seguridad: ['7 airbags', 'ABS + EBD', 'Control de estabilidad', 'Control de tracción', 'Toyota Safety Sense', 'Anclajes ISOFIX'],
     confort: ['Butacas parcialmente eléctricas', 'Tapizado de cuero', 'Volante multifunción', 'Encendido por botón', 'Espejos rebatibles eléctricos'],
-    img: 'assets/vehiculos/corolla-card.webp', galeria: fotos('corolla'),
+    img: 'assets/vehiculos/corolla-card.jpg', galeria: fotos('corolla'),
   },
   {
     id: 2, tipo: 'auto', marca: 'Toyota', modelo: 'Hilux', version: 'SRV 2.8 TDI 4x4 AT',
     anio: 2020, precio: 54900000, km: 89000, combustible: 'Diésel',
     motor: '2.8 Turbo Diésel', potencia: '204 cv', caja: 'Automática 6 vel.',
-    traccion: '4x4', color: 'Blanco Perlado', ubicacion: 'La Plata, Buenos Aires',
+    traccion: '4x4', color: 'Gris Plata', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AE 456 MN', duenos: 2, estado: 'Muy bueno',
     servicios: 'Service oficial completo. Correa/cadena y filtros al día.',
     neumaticos: 'Goodyear Wrangler — 60% de vida útil',
@@ -75,13 +44,13 @@ const VEHICULOS = [
     equipamiento: ['Pantalla multimedia', 'Cámara de retroceso', 'Control crucero', 'Faros LED', 'Llantas 18"', 'Tomas 12V en caja'],
     seguridad: ['7 airbags', 'ABS + EBD', 'Control de descenso', 'Asistente de arranque en pendiente', 'Control de estabilidad', 'Diferencial trasero autoblocante'],
     confort: ['Climatizador automático bizona', 'Butaca del conductor eléctrica', 'Tapizado de cuero', 'Volante con levas', 'Llave inteligente'],
-    img: 'assets/vehiculos/hilux-card.webp', galeria: fotos('hilux'),
+    img: 'assets/vehiculos/hilux-card.jpg', galeria: fotos('hilux'),
   },
   {
     id: 3, tipo: 'auto', marca: 'Volkswagen', modelo: 'Amarok', version: 'Highline 3.0 V6 4x4 AT',
-    anio: 2019, precio: 52000000, km: 112000, combustible: 'Diésel',
+    anio: 2021, precio: 52000000, km: 112000, combustible: 'Diésel',
     motor: '3.0 V6 TDI', potencia: '258 cv', caja: 'Automática 8 vel. Tiptronic',
-    traccion: '4x4 permanente', color: 'Gris Indio', ubicacion: 'La Plata, Buenos Aires',
+    traccion: '4x4 permanente', color: 'Beige', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AD 789 PQ', duenos: 2, estado: 'Muy bueno',
     servicios: 'Servicios al día en taller especializado VW. Distribución revisada.',
     neumaticos: 'Pirelli Scorpion — 55% de vida útil',
@@ -91,13 +60,13 @@ const VEHICULOS = [
     equipamiento: ['App-Connect', 'Cámara de retroceso', 'Sensores 360°', 'Faros bi-xenón', 'Llantas 19"', 'Techo con barras'],
     seguridad: ['Airbags frontales y laterales', 'ABS off-road', 'Control de estabilidad', 'Asistente de descenso', 'Cámara multivista'],
     confort: ['Climatizador bizona', 'Butacas eléctricas con memoria', 'Volante con levas', 'Encendido por botón', 'Cargador y tomas USB'],
-    img: 'assets/vehiculos/amarok-card.webp', galeria: fotos('amarok'),
+    img: 'assets/vehiculos/amarok-card.jpg', galeria: fotos('amarok'),
   },
   {
     id: 4, tipo: 'auto', marca: 'Volkswagen', modelo: 'Golf', version: 'GTI 2.0 TSI DSG',
     anio: 2018, precio: 34000000, km: 68000, combustible: 'Nafta',
     motor: '2.0 TSI Turbo', potencia: '220 cv', caja: 'Automática DSG 6 vel.',
-    traccion: 'Delantera', color: 'Rojo Tornado', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Delantera', color: 'Blanco', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AC 321 RS', duenos: 1, estado: 'Excelente',
     servicios: 'Mantenimiento riguroso, aceite premium cada 10.000 km.',
     neumaticos: 'Continental SportContact — 65% de vida útil',
@@ -107,13 +76,13 @@ const VEHICULOS = [
     equipamiento: ['Digital Cockpit', 'Pantalla táctil', 'App-Connect', 'Faros full LED', 'Llantas 18" GTI', 'Escape deportivo'],
     seguridad: ['6 airbags', 'ABS + ESP', 'Control de tracción', 'Asistente de frenado', 'Anclajes ISOFIX'],
     confort: ['Climatizador Climatronic', 'Butacas deportivas', 'Volante multifunción en cuero', 'Sensor de lluvia', 'Encendido por botón'],
-    img: 'assets/vehiculos/golf-card.webp', galeria: fotos('golf'),
+    img: 'assets/vehiculos/golf-card.jpg', galeria: fotos('golf'),
   },
   {
     id: 5, tipo: 'auto', marca: 'Volkswagen', modelo: 'Polo', version: 'Highline 1.6 MSI AT',
     anio: 2021, precio: 22500000, km: 39000, combustible: 'Nafta',
     motor: '1.6 MSI', potencia: '110 cv', caja: 'Automática Tiptronic 6 vel.',
-    traccion: 'Delantera', color: 'Blanco Cristal', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Delantera', color: 'Gris Plata', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AF 654 TU', duenos: 1, estado: 'Excelente',
     servicios: 'Service oficial al día. Bajo kilometraje.',
     neumaticos: 'Firestone — 80% de vida útil',
@@ -123,13 +92,13 @@ const VEHICULOS = [
     equipamiento: ['Pantalla táctil 6.5"', 'App-Connect', 'Cámara de retroceso', 'Sensores traseros', 'Llantas de aleación', 'Control crucero'],
     seguridad: ['4 airbags', 'ABS + EBD', 'Control de estabilidad', 'Asistente de arranque en pendiente', 'ISOFIX'],
     confort: ['Aire acondicionado', 'Volante multifunción', 'Levantavidrios eléctricos', 'Espejos eléctricos', 'Bluetooth'],
-    img: IMG_AUTO[7], galeria: gal(IMG_AUTO, 7),
+    img: 'assets/vehiculos/polo-card.jpg', galeria: fotos('polo', 4),
   },
   {
     id: 6, tipo: 'auto', marca: 'Ford', modelo: 'Ranger', version: 'Limited 3.2 TDCi 4x4 AT',
     anio: 2020, precio: 49000000, km: 95000, combustible: 'Diésel',
     motor: '3.2 TDCi 5 cil.', potencia: '200 cv', caja: 'Automática 6 vel.',
-    traccion: '4x4', color: 'Azul Aurora', ubicacion: 'La Plata, Buenos Aires',
+    traccion: '4x4', color: 'Gris Plata', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AE 987 VW', duenos: 2, estado: 'Muy bueno',
     servicios: 'Servicios Ford al día. Cambio de embrague no requerido (automática).',
     neumaticos: 'BF Goodrich — 50% de vida útil',
@@ -139,7 +108,7 @@ const VEHICULOS = [
     equipamiento: ['SYNC 3 con pantalla 8"', 'Cámara de retroceso', 'Sensores delanteros y traseros', 'Faros HID', 'Llantas 18"', 'Techo corredizo'],
     seguridad: ['6 airbags', 'ABS', 'Control de estabilidad', 'Control de descenso', 'Cámara de retroceso', 'Alerta de cambio de carril'],
     confort: ['Climatizador bizona', 'Butacas de cuero calefaccionadas', 'Butaca eléctrica', 'Volante en cuero', 'Llave inteligente'],
-    img: IMG_AUTO[8], galeria: gal(IMG_AUTO, 8),
+    img: 'assets/vehiculos/ranger-card.jpg', galeria: fotos('ranger', 5),
   },
   {
     id: 7, tipo: 'auto', marca: 'Ford', modelo: 'Focus', version: 'Titanium 2.0 AT',
@@ -155,13 +124,13 @@ const VEHICULOS = [
     equipamiento: ['SYNC con pantalla', 'Cámara de retroceso', 'Sensor de estacionamiento', 'Estacionamiento automático', 'Faros bi-xenón', 'Llantas 17"'],
     seguridad: ['7 airbags', 'ABS + EBD', 'Control de estabilidad', 'Control de tracción', 'ISOFIX'],
     confort: ['Climatizador automático', 'Butacas de cuero', 'Volante multifunción', 'Encendido por botón', 'Sensor de lluvia y luz'],
-    img: IMG_AUTO[11], galeria: gal(IMG_AUTO, 11),
+    img: 'assets/vehiculos/focus-card.jpg', galeria: fotos('focus', 4),
   },
   {
     id: 8, tipo: 'auto', marca: 'Chevrolet', modelo: 'Cruze', version: 'LTZ 1.4 Turbo AT',
     anio: 2019, precio: 24000000, km: 57000, combustible: 'Nafta',
     motor: '1.4 Turbo', potencia: '153 cv', caja: 'Automática 6 vel.',
-    traccion: 'Delantera', color: 'Negro Ónix', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Delantera', color: 'Blanco', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AC 135 ZA', duenos: 1, estado: 'Excelente',
     servicios: 'Servicios Chevrolet al día. Único dueño con historial completo.',
     neumaticos: 'Goodyear EfficientGrip — 65% de vida útil',
@@ -171,13 +140,13 @@ const VEHICULOS = [
     equipamiento: ['MyLink pantalla 8"', 'Wi-Fi nativo', 'Cargador inalámbrico', 'Cámara de retroceso', 'Sensores de estacionamiento', 'Llantas 16"'],
     seguridad: ['6 airbags', 'ABS + EBD', 'Control de estabilidad', 'Control de tracción', 'Alerta de colisión', 'ISOFIX'],
     confort: ['Climatizador automático', 'Butacas de cuero', 'Volante multifunción', 'Encendido por botón', 'Espejos eléctricos rebatibles'],
-    img: IMG_AUTO[1], galeria: gal(IMG_AUTO, 1),
+    img: 'assets/vehiculos/cruze-card.jpg', galeria: fotos('cruze', 4),
   },
   {
     id: 9, tipo: 'auto', marca: 'Chevrolet', modelo: 'Tracker', version: 'Premier 1.2 Turbo AT',
     anio: 2022, precio: 31000000, km: 31000, combustible: 'Nafta',
     motor: '1.2 Turbo', potencia: '133 cv', caja: 'Automática 6 vel.',
-    traccion: 'Delantera', color: 'Blanco Summit', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Delantera', color: 'Gris Plata', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AF 802 BC', duenos: 1, estado: 'Excelente',
     servicios: 'Prácticamente nueva. Primer service realizado en tiempo y forma.',
     neumaticos: 'Continental — 85% de vida útil',
@@ -187,13 +156,13 @@ const VEHICULOS = [
     equipamiento: ['Pantalla 8" MyLink+', 'Wi-Fi nativo', 'Cámara de retroceso', 'Techo panorámico', 'Faros LED', 'Llantas 17"'],
     seguridad: ['6 airbags', 'ABS + EBD', 'Control de estabilidad', 'Alerta de punto ciego', 'Cámara de retroceso', 'ISOFIX'],
     confort: ['Climatizador automático', 'Butacas de cuero', 'Encendido por botón', 'Volante multifunción', 'Sensor de lluvia'],
-    img: IMG_AUTO[5], galeria: gal(IMG_AUTO, 5),
+    img: 'assets/vehiculos/tracker-card.jpg', galeria: fotos('tracker', 5),
   },
   {
     id: 10, tipo: 'auto', marca: 'Renault', modelo: 'Sandero', version: 'Stepway Intens 1.6',
     anio: 2020, precio: 17500000, km: 48000, combustible: 'Nafta',
     motor: '1.6 16V', potencia: '115 cv', caja: 'Manual 5 vel.',
-    traccion: 'Delantera', color: 'Naranja Vulcano', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Delantera', color: 'Rojo', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AE 470 DE', duenos: 1, estado: 'Muy bueno',
     servicios: 'Service al día. Correa de distribución sin necesidad de cambio.',
     neumaticos: 'Firestone — 60% de vida útil',
@@ -203,13 +172,13 @@ const VEHICULOS = [
     equipamiento: ['Media Nav pantalla 7"', 'Navegador GPS', 'Cámara de retroceso', 'Barras de techo', 'Llantas de aleación', 'Bluetooth'],
     seguridad: ['4 airbags', 'ABS', 'Control de estabilidad', 'Asistente de arranque en pendiente', 'ISOFIX'],
     confort: ['Aire acondicionado', 'Volante multifunción', 'Levantavidrios eléctricos', 'Computadora de a bordo', 'Espejos eléctricos'],
-    img: IMG_AUTO[2], galeria: gal(IMG_AUTO, 2),
+    img: 'assets/vehiculos/sandero-card.jpg', galeria: fotos('sandero', 4),
   },
   {
     id: 11, tipo: 'auto', marca: 'Renault', modelo: 'Duster', version: 'Iconic 1.3 Turbo CVT',
     anio: 2021, precio: 26000000, km: 42000, combustible: 'Nafta',
     motor: '1.3 TCe Turbo', potencia: '154 cv', caja: 'Automática CVT',
-    traccion: 'Delantera', color: 'Gris Estrella', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Delantera', color: 'Rojo', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AF 015 FG', duenos: 1, estado: 'Excelente',
     servicios: 'Servicios oficiales al día. Motor turbo de nueva generación.',
     neumaticos: 'Continental — 70% de vida útil',
@@ -219,7 +188,7 @@ const VEHICULOS = [
     equipamiento: ['Pantalla 8"', 'Apple CarPlay / Android Auto', 'Cámara multivista 360°', 'Faros LED', 'Llantas 17"', 'Tarjeta manos libres'],
     seguridad: ['4 airbags', 'ABS + EBD', 'Control de estabilidad', 'Alerta de punto ciego', 'Cámara 360°', 'ISOFIX'],
     confort: ['Climatizador automático', 'Butacas de cuero', 'Encendido por botón', 'Volante multifunción', 'Freno de mano eléctrico'],
-    img: IMG_AUTO[6], galeria: gal(IMG_AUTO, 6),
+    img: 'assets/vehiculos/duster-card.jpg', galeria: fotos('duster', 5),
   },
   {
     id: 12, tipo: 'auto', marca: 'Peugeot', modelo: '208', version: 'Feline 1.6 Tiptronic',
@@ -235,13 +204,13 @@ const VEHICULOS = [
     equipamiento: ['Pantalla táctil 7"', 'i-Cockpit', 'Cámara de retroceso', 'Sensores traseros', 'Faros con firma LED', 'Llantas de aleación'],
     seguridad: ['6 airbags', 'ABS + REF', 'Control de estabilidad', 'Control de tracción', 'ISOFIX'],
     confort: ['Climatizador automático', 'Volante compacto multifunción', 'Encendido por botón', 'Levantavidrios eléctricos', 'Espejos eléctricos'],
-    img: IMG_AUTO[9], galeria: gal(IMG_AUTO, 9),
+    img: 'assets/vehiculos/208-card.jpg', galeria: fotos('208', 4),
   },
   {
     id: 13, tipo: 'auto', marca: 'Peugeot', modelo: '308', version: 'Allure 1.6 THP AT',
     anio: 2018, precio: 19000000, km: 73000, combustible: 'Nafta',
     motor: '1.6 THP Turbo', potencia: '163 cv', caja: 'Automática 6 vel.',
-    traccion: 'Delantera', color: 'Gris Grafito', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Delantera', color: 'Gris Plata', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AB 908 JK', duenos: 2, estado: 'Bueno',
     servicios: 'Turbo y distribución revisados. Servicios al día.',
     neumaticos: 'Bridgestone — 50% de vida útil',
@@ -251,13 +220,13 @@ const VEHICULOS = [
     equipamiento: ['Pantalla táctil', 'i-Cockpit', 'Cámara de retroceso', 'Sensores de estacionamiento', 'Faros full LED', 'Llantas 17"'],
     seguridad: ['6 airbags', 'ABS + EBD', 'Control de estabilidad', 'Control de tracción', 'ISOFIX'],
     confort: ['Climatizador bizona', 'Butacas con regulación lumbar', 'Techo panorámico', 'Volante multifunción', 'Sensor de lluvia'],
-    img: IMG_AUTO[0], galeria: gal(IMG_AUTO, 8),
+    img: 'assets/vehiculos/308-card.jpg', galeria: fotos('308', 5),
   },
   {
     id: 14, tipo: 'auto', marca: 'Fiat', modelo: 'Cronos', version: 'Precision 1.3 GSE CVT',
     anio: 2022, precio: 18500000, km: 28000, combustible: 'Nafta',
     motor: '1.3 GSE Firefly', potencia: '99 cv', caja: 'Automática CVT',
-    traccion: 'Delantera', color: 'Blanco Banchisa', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Delantera', color: 'Gris Grafito', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AF 517 LM', duenos: 1, estado: 'Excelente',
     servicios: 'Casi nuevo. Primer service oficial realizado.',
     neumaticos: 'Goodyear — 85% de vida útil',
@@ -267,13 +236,13 @@ const VEHICULOS = [
     equipamiento: ['Pantalla táctil 7"', 'Apple CarPlay / Android Auto', 'Cámara de retroceso', 'Sensores traseros', 'Llantas de aleación', 'Control crucero'],
     seguridad: ['4 airbags', 'ABS + EBD', 'Control de estabilidad', 'Asistente de arranque en pendiente', 'ISOFIX'],
     confort: ['Aire acondicionado', 'Volante multifunción de cuero', 'Levantavidrios eléctricos', 'Espejos eléctricos', 'Bluetooth'],
-    img: IMG_AUTO[3], galeria: gal(IMG_AUTO, 5),
+    img: 'assets/vehiculos/cronos-card.jpg', galeria: fotos('cronos', 5),
   },
   {
     id: 15, tipo: 'auto', marca: 'Honda', modelo: 'Civic', version: 'EXL 2.0 CVT',
-    anio: 2019, precio: 29000000, km: 54000, combustible: 'Nafta',
+    anio: 2017, precio: 29000000, km: 54000, combustible: 'Nafta',
     motor: '2.0 i-VTEC', potencia: '155 cv', caja: 'Automática CVT',
-    traccion: 'Delantera', color: 'Blanco Perlado', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Delantera', color: 'Gris Moderno', ubicacion: 'La Plata, Buenos Aires',
     patente: 'AC 733 NP', duenos: 1, estado: 'Excelente',
     servicios: 'Servicios Honda al día. Muy bien mantenido.',
     neumaticos: 'Michelin Primacy — 65% de vida útil',
@@ -283,7 +252,7 @@ const VEHICULOS = [
     equipamiento: ['Pantalla táctil', 'Apple CarPlay / Android Auto', 'Cámara LaneWatch', 'Techo solar eléctrico', 'Faros LED', 'Llantas 17"'],
     seguridad: ['6 airbags', 'ABS + EBD', 'Control de estabilidad', 'Cámara LaneWatch', 'Control de tracción', 'ISOFIX'],
     confort: ['Climatizador bizona', 'Butacas de cuero eléctricas', 'Encendido por botón', 'Volante multifunción', 'Sensor de lluvia y luz'],
-    img: IMG_AUTO[7], galeria: gal(IMG_AUTO, 3),
+    img: 'assets/vehiculos/civic-card.jpg', galeria: fotos('civic', 5),
   },
 
   /* ---------------------------- MOTOS ---------------------------- */
@@ -291,7 +260,7 @@ const VEHICULOS = [
     id: 16, tipo: 'moto', marca: 'Honda', modelo: 'Wave 110', version: 'S 110cc',
     anio: 2022, precio: 2800000, km: 12000, combustible: 'Nafta',
     motor: '109 cc monocilíndrico', potencia: '8,4 cv', caja: 'Semiautomática 4 vel.',
-    traccion: 'Cadena', color: 'Rojo', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Cadena', color: 'Blanco', ubicacion: 'La Plata, Buenos Aires',
     patente: 'A123BCD', duenos: 1, estado: 'Excelente',
     servicios: 'Service al día en Honda. Muy bajo consumo.',
     neumaticos: 'Originales — 75% de vida útil',
@@ -301,13 +270,13 @@ const VEHICULOS = [
     equipamiento: ['Tablero digital-analógico', 'Arranque eléctrico y a pedal', 'Portapaquetes', 'Baúl trasero'],
     seguridad: ['Freno de disco delantero', 'Freno a tambor trasero', 'Luces LED de posición', 'Traba de manubrio'],
     confort: ['Asiento biplaza cómodo', 'Bajo consumo (~55 km/l)', 'Encendido eléctrico', 'Fácil manejo'],
-    img: IMG_MOTO[0], galeria: [IMG_MOTO[0], IMG_MOTO[1], IMG_MOTO[2]],
+    img: 'assets/vehiculos/wave-card.jpg', galeria: fotos('wave', 4),
   },
   {
     id: 17, tipo: 'moto', marca: 'Honda', modelo: 'CB190R', version: '190cc',
     anio: 2021, precio: 3900000, km: 18000, combustible: 'Nafta',
     motor: '184 cc monocilíndrico', potencia: '16,5 cv', caja: 'Manual 5 vel.',
-    traccion: 'Cadena', color: 'Negro Mate', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Cadena', color: 'Azul', ubicacion: 'La Plata, Buenos Aires',
     patente: 'A456EFG', duenos: 1, estado: 'Muy bueno',
     servicios: 'Servicios realizados. Cadena y kit de arrastre en buen estado.',
     neumaticos: 'Originales — 60% de vida útil',
@@ -317,13 +286,13 @@ const VEHICULOS = [
     equipamiento: ['Tablero digital', 'Faro full LED', 'Llantas de aleación', 'Arranque eléctrico'],
     seguridad: ['Freno de disco delantero y trasero', 'Neumáticos anchos', 'Luces LED', 'Traba de manubrio'],
     confort: ['Posición de manejo cómoda', 'Buen alcance de frenos', 'Asiento biplaza', 'Bajo mantenimiento'],
-    img: IMG_MOTO[1], galeria: [IMG_MOTO[1], IMG_MOTO[3], IMG_MOTO[0]],
+    img: 'assets/vehiculos/cb190r-card.jpg', galeria: fotos('cb190r', 3),
   },
   {
     id: 18, tipo: 'moto', marca: 'Yamaha', modelo: 'FZ', version: 'FZ-S FI 3.0 150cc',
     anio: 2021, precio: 4200000, km: 15000, combustible: 'Nafta',
     motor: '149 cc inyección', potencia: '12,4 cv', caja: 'Manual 5 vel.',
-    traccion: 'Cadena', color: 'Azul', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Cadena', color: 'Negro', ubicacion: 'La Plata, Buenos Aires',
     patente: 'A789HIJ', duenos: 1, estado: 'Excelente',
     servicios: 'Service oficial Yamaha al día. Inyección electrónica sin fallas.',
     neumaticos: 'Originales anchos — 70% de vida útil',
@@ -333,13 +302,13 @@ const VEHICULOS = [
     equipamiento: ['Tablero full digital', 'Faro LED', 'Sistema de inyección FI', 'Llantas de aleación'],
     seguridad: ['Freno de disco delantero', 'Sistema UBS de frenos', 'Neumático trasero ancho', 'Luces LED'],
     confort: ['Asiento ergonómico', 'Buen torque a bajas vueltas', 'Bajo consumo', 'Posición erguida cómoda'],
-    img: IMG_MOTO[2], galeria: [IMG_MOTO[2], IMG_MOTO[4], IMG_MOTO[1]],
+    img: 'assets/vehiculos/fz-card.jpg', galeria: fotos('fz', 5),
   },
   {
     id: 19, tipo: 'moto', marca: 'Bajaj', modelo: 'Rouser NS200', version: '200cc',
     anio: 2020, precio: 4600000, km: 22000, combustible: 'Nafta',
     motor: '199,5 cc líquida', potencia: '24,5 cv', caja: 'Manual 6 vel.',
-    traccion: 'Cadena', color: 'Rojo', ubicacion: 'La Plata, Buenos Aires',
+    traccion: 'Cadena', color: 'Amarillo', ubicacion: 'La Plata, Buenos Aires',
     patente: 'A321KLM', duenos: 2, estado: 'Muy bueno',
     servicios: 'Servicios al día. Refrigeración líquida revisada.',
     neumaticos: 'Originales — 55% de vida útil',
@@ -349,7 +318,7 @@ const VEHICULOS = [
     equipamiento: ['Tablero digital', 'Refrigeración líquida', '6ta marcha', 'Llantas de aleación'],
     seguridad: ['Freno de disco delantero y trasero', 'Chasis perimetral', 'Neumáticos anchos', 'Luces de posición'],
     confort: ['Posición semideportiva', 'Buen andar en ruta', 'Asiento biplaza', 'Motor refrigerado por líquido'],
-    img: IMG_MOTO[3], galeria: [IMG_MOTO[3], IMG_MOTO[0], IMG_MOTO[2]],
+    img: 'assets/vehiculos/rouser-card.jpg', galeria: fotos('rouser', 4),
   },
   {
     id: 20, tipo: 'moto', marca: 'KTM', modelo: 'Duke 200', version: '200cc',
@@ -365,7 +334,7 @@ const VEHICULOS = [
     equipamiento: ['Tablero LCD invertido', 'Faro LED', 'Chasis trellis naranja', 'Llantas de aleación', 'Inyección Bosch'],
     seguridad: ['Freno de disco ByBre', 'ABS Bosch', 'Neumáticos deportivos', 'Luces LED'],
     confort: ['Posición deportiva', 'Motor muy potente para su cilindrada', 'Muy liviana', 'Suspensión WP'],
-    img: IMG_MOTO[4], galeria: [IMG_MOTO[4], IMG_MOTO[2], IMG_MOTO[3]],
+    img: 'assets/vehiculos/duke-card.jpg', galeria: fotos('duke', 4),
   },
 ];
 
