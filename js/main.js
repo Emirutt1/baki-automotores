@@ -513,8 +513,7 @@
   function animarHero() {
     if (!window.gsap) return;
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.from('#hero-badge',    { opacity: 0, y: 20, duration: .6, delay: .2 })
-      .from('#hero-titulo',   { opacity: 0, x: -80, duration: 1 }, '-=.2')     // Fade In desde la izquierda
+    tl.from('#hero-titulo',   { opacity: 0, x: -80, duration: 1, delay: .2 })   // Fade In desde la izquierda
       .from('#hero-subtitulo',{ opacity: 0, x: -40, duration: .8 }, '-=.6')
       .from('#hero-acciones', { opacity: 0, y: 30, duration: .7 }, '-=.5')
       .from('#scroll-ind',    { opacity: 0, duration: .6 }, '-=.2');
